@@ -13,19 +13,19 @@ terraform {
 
 #Buscando as Lambdas
 data "aws_lambda_function" "lambda_pedido" {
-    function_name = "lambda_pedido_function" 
+  function_name = "lambda_pedido_function"
 }
 
 data "aws_lambda_function" "lambda_produto" {
-    function_name = "lambda_produto_function" 
+  function_name = "lambda_produto_function"
 }
 
 data "aws_lambda_function" "lambda_pagamento" {
-    function_name = "lambda_pagamento_function" 
+  function_name = "lambda_pagamento_function"
 }
 
 data "aws_lambda_function" "lambda_cliente" {
-    function_name = "lambda_cliente_function" 
+  function_name = "lambda_cliente_function"
 }
 
 # API Gateway Authorizer

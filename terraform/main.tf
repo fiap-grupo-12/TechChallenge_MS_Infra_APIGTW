@@ -329,7 +329,7 @@ resource "aws_api_gateway_integration" "get_produto_by_categoria_integration" {
   http_method             = aws_api_gateway_method.get_produto_by_categoria.http_method
   type                    = "AWS_PROXY"
   integration_http_method = "GET"
-  uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${data.aws_lambda_function.lambda_produto.arn}/invocations/{categoria}"
+  uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${data.aws_lambda_function.lambda_produto.arn}/invocations"
 
   request_parameters = {
     "integration.request.path.categoria" = "method.request.path.categoria"

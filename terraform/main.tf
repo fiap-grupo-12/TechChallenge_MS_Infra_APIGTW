@@ -44,29 +44,22 @@ resource "aws_api_gateway_rest_api" "lanchonete_api" {
   description = "API Gateway para Lanchonete - Micros Serviços"
 }
 
-# Root Resource "/api"
-resource "aws_api_gateway_resource" "api_resource" {
-  rest_api_id = aws_api_gateway_rest_api.lanchonete_api.id
-  parent_id   = aws_api_gateway_rest_api.lanchonete_api.root_resource_id
-  path_part   = "api"
-}
-
 # Resources under "/api"
 resource "aws_api_gateway_resource" "cliente_resource" {
   rest_api_id = aws_api_gateway_rest_api.lanchonete_api.id
-  parent_id   = aws_api_gateway_resource.api_resource.id
+  parent_id   = aws_api_gateway_rest_api.lanchonete_api.root_resource_id
   path_part   = "Cliente"
 }
 
 resource "aws_api_gateway_resource" "pedido_resource" {
   rest_api_id = aws_api_gateway_rest_api.lanchonete_api.id
-  parent_id   = aws_api_gateway_resource.api_resource.id
+  parent_id   = aws_api_gateway_rest_api.lanchonete_api.root_resource_id
   path_part   = "Pedido"
 }
 
 resource "aws_api_gateway_resource" "produto_resource" {
   rest_api_id = aws_api_gateway_rest_api.lanchonete_api.id
-  parent_id   = aws_api_gateway_resource.api_resource.id
+  parent_id   = aws_api_gateway_rest_api.lanchonete_api.root_resource_id
   path_part   = "Produto"
 }
 

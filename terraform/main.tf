@@ -74,7 +74,7 @@ resource "aws_api_gateway_resource" "cliente_cpf_resource" {
 resource "aws_api_gateway_resource" "pedido_id_resource" {
   rest_api_id = aws_api_gateway_rest_api.lanchonete_api.id
   parent_id   = aws_api_gateway_resource.pedido_resource.id
-  path_part   = "{Id}"
+  path_part   = "{id}"
 }
 
 resource "aws_api_gateway_resource" "pedido_filtrados_resource" {
@@ -92,7 +92,7 @@ resource "aws_api_gateway_resource" "pedido_status_pagamento_resource" {
 resource "aws_api_gateway_resource" "pedido_status_pagamento_id_resource" {
   rest_api_id = aws_api_gateway_rest_api.lanchonete_api.id
   parent_id   = aws_api_gateway_resource.pedido_status_pagamento_resource.id
-  path_part   = "{Id}"
+  path_part   = "{id}"
 }
 
 resource "aws_api_gateway_resource" "pedido_status_pedido_resource" {
@@ -194,7 +194,7 @@ resource "aws_api_gateway_integration" "post_pedido_integration" {
   uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${data.aws_lambda_function.lambda_pedido.arn}/invocations"
 }
 
-### /api/Pedido/{Id} - GET ###
+### /Pedido/{Id} - GET ###
 resource "aws_api_gateway_method" "get_pedido_by_id" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.pedido_id_resource.id
@@ -202,7 +202,7 @@ resource "aws_api_gateway_method" "get_pedido_by_id" {
   authorization = "CUSTOM"
   authorizer_id = aws_api_gateway_authorizer.lambda_authorizer.id
   request_parameters = {
-    "method.request.path.Id" = true
+    "method.request.path.id" = true
   }
 }
 
@@ -215,11 +215,11 @@ resource "aws_api_gateway_integration" "get_pedido_by_id_integration" {
   uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${data.aws_lambda_function.lambda_pedido.arn}/invocations"
 
   request_parameters = {
-    "integration.request.path.Id" = "method.request.path.Id"
+    "integration.request.path.id" = "method.request.path.id"
   }
 }
 
-### /api/Pedido/Filtrados - GET ###
+### /Pedido/Filtrados - GET ###
 resource "aws_api_gateway_method" "get_pedido_filtrados" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.pedido_filtrados_resource.id
@@ -237,7 +237,7 @@ resource "aws_api_gateway_integration" "get_pedido_filtrados_integration" {
   uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${data.aws_lambda_function.lambda_pedido.arn}/invocations"
 }
 
-### /api/Pedido/StatusPagamento/{Id} - GET ###
+### /Pedido/StatusPagamento/{Id} - GET ###
 resource "aws_api_gateway_method" "get_status_pagamento_by_id" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.pedido_status_pagamento_id_resource.id
@@ -245,7 +245,7 @@ resource "aws_api_gateway_method" "get_status_pagamento_by_id" {
   authorization = "CUSTOM"
   authorizer_id = aws_api_gateway_authorizer.lambda_authorizer.id
   request_parameters = {
-    "method.request.path.Id" = true
+    "method.request.path.id" = true
   }
 }
 
@@ -258,11 +258,11 @@ resource "aws_api_gateway_integration" "get_status_pagamento_by_id_integration" 
   uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${data.aws_lambda_function.lambda_pedido.arn}/invocations"
 
   request_parameters = {
-    "integration.request.path.Id" = "method.request.path.Id"
+    "integration.request.path.id" = "method.request.path.id"
   }
 }
 
-### /api/Pedido/StatusPedido - PUT ###
+### /Pedido/StatusPedido - PUT ###
 resource "aws_api_gateway_method" "put_status_pedido" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.pedido_status_pedido_resource.id
@@ -283,7 +283,7 @@ resource "aws_api_gateway_integration" "put_status_pedido_integration" {
   uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${data.aws_lambda_function.lambda_pedido.arn}/invocations"
 }
 
-### /api/Pedido/StatusPagamento - PUT ###
+### /Pedido/StatusPagamento - PUT ###
 resource "aws_api_gateway_method" "put_status_pagamento" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.pedido_status_pagamento_resource.id
@@ -304,7 +304,7 @@ resource "aws_api_gateway_integration" "put_status_pagamento_integration" {
   uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${data.aws_lambda_function.lambda_pedido.arn}/invocations"
 }
 
-### /api/Produto/{categoria} - GET ###
+### /Produto/{categoria} - GET ###
 resource "aws_api_gateway_method" "get_produto_by_categoria" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.produto_categoria_resource.id
@@ -329,7 +329,7 @@ resource "aws_api_gateway_integration" "get_produto_by_categoria_integration" {
   }
 }
 
-### /api/Produto - POST, PUT, DELETE ###
+### /Produto - POST, PUT, DELETE ###
 resource "aws_api_gateway_method" "post_produto" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.produto_resource.id
@@ -401,7 +401,7 @@ resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido" {
   function_name = data.aws_lambda_function.lambda_pedido.function_name
   principal     = "apigateway.amazonaws.com"
 
-  source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*/*"
+  source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*/*/*"
 }
 
 resource "aws_lambda_permission" "allow_api_gateway_invoke_produto" {
@@ -410,7 +410,7 @@ resource "aws_lambda_permission" "allow_api_gateway_invoke_produto" {
   function_name = data.aws_lambda_function.lambda_produto.function_name
   principal     = "apigateway.amazonaws.com"
 
-  source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*/*"
+  source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*/*/*"
 }
 
 resource "aws_lambda_permission" "allow_api_gateway_invoke_cliente" {
@@ -419,7 +419,7 @@ resource "aws_lambda_permission" "allow_api_gateway_invoke_cliente" {
   function_name = data.aws_lambda_function.lambda_cliente.function_name
   principal     = "apigateway.amazonaws.com"
 
-  source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*/*"
+  source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*/*/*"
 }
 
 # Define Models for Request Bodies

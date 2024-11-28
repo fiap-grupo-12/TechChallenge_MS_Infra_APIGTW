@@ -110,7 +110,7 @@ resource "aws_api_gateway_resource" "produto_categoria_resource" {
 
 # Methods and Integrations for Each Endpoint
 
-### /api/Cliente/{cpf} - GET ###
+### /Cliente/{cpf} - GET ###
 resource "aws_api_gateway_method" "get_cliente_by_cpf" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.cliente_cpf_resource.id
@@ -135,7 +135,7 @@ resource "aws_api_gateway_integration" "get_cliente_by_cpf_integration" {
   }
 }
 
-### /api/Cliente - POST ###
+### /Cliente - POST ###
 resource "aws_api_gateway_method" "post_cliente" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.cliente_resource.id
@@ -156,7 +156,7 @@ resource "aws_api_gateway_integration" "post_cliente_integration" {
   uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${data.aws_lambda_function.lambda_cliente.arn}/invocations"
 }
 
-### /api/Pedido - GET & POST ###
+### /Pedido - GET & POST ###
 resource "aws_api_gateway_method" "get_pedido" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.pedido_resource.id
@@ -392,6 +392,34 @@ resource "aws_api_gateway_integration" "delete_produto_integration" {
   request_parameters = {
     "integration.request.querystring.id" = "method.request.querystring.id"
   }
+}
+
+#Permission for lambdas
+resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido" {
+  statement_id  = "AllowAPIGatewayInvokePedido"
+  action        = "lambda:InvokeFunction"
+  function_name = data.aws_lambda_function.lambda_pedido.function_name
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*/*"
+}
+
+resource "aws_lambda_permission" "allow_api_gateway_invoke_produto" {
+  statement_id  = "AllowAPIGatewayInvokeProduto"
+  action        = "lambda:InvokeFunction"
+  function_name = data.aws_lambda_function.lambda_produto.function_name
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*/*"
+}
+
+resource "aws_lambda_permission" "allow_api_gateway_invoke_cliente" {
+  statement_id  = "AllowAPIGatewayInvokeCliente"
+  action        = "lambda:InvokeFunction"
+  function_name = data.aws_lambda_function.lambda_cliente.function_name
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*/*"
 }
 
 # Define Models for Request Bodies

@@ -174,6 +174,15 @@ resource "aws_api_gateway_integration" "get_pedido_integration" {
   uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${data.aws_lambda_function.lambda_pedido.arn}/invocations"
 }
 
+resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido" {
+  statement_id  = "AllowAPIGatewayInvokePedido"
+  action        = "lambda:InvokeFunction"
+  function_name = data.aws_lambda_function.lambda_pedido.function_name
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*/POST/Pedido"
+}
+
 resource "aws_api_gateway_method" "post_pedido" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.pedido_resource.id
@@ -395,14 +404,14 @@ resource "aws_api_gateway_integration" "delete_produto_integration" {
 }
 
 #Permission for lambdas
-resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido" {
-  statement_id  = "AllowAPIGatewayInvokePedido"
-  action        = "lambda:InvokeFunction"
-  function_name = data.aws_lambda_function.lambda_pedido.function_name
-  principal     = "apigateway.amazonaws.com"
+# resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido" {
+#   statement_id  = "AllowAPIGatewayInvokePedido"
+#   action        = "lambda:InvokeFunction"
+#   function_name = data.aws_lambda_function.lambda_pedido.function_name
+#   principal     = "apigateway.amazonaws.com"
 
-  source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*"
-}
+#   source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*"
+# }
 
 resource "aws_lambda_permission" "allow_api_gateway_invoke_produto" {
   statement_id  = "AllowAPIGatewayInvokeProduto"

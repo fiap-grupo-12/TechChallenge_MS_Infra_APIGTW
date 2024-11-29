@@ -407,7 +407,7 @@ resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido" {
 }
 
 resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido_id" {
-  statement_id  = "AllowAPIGatewayInvokePedido"
+  statement_id  = "AllowAPIGatewayInvokePedidoId"
   action        = "lambda:InvokeFunction"
   function_name = data.aws_lambda_function.lambda_pedido.function_name
   principal     = "apigateway.amazonaws.com"
@@ -416,7 +416,7 @@ resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido_id" {
 }
 
 resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido_filtrados" {
-  statement_id  = "AllowAPIGatewayInvokePedido"
+  statement_id  = "AllowAPIGatewayInvokePedidoFiltrados"
   action        = "lambda:InvokeFunction"
   function_name = data.aws_lambda_function.lambda_pedido.function_name
   principal     = "apigateway.amazonaws.com"
@@ -425,7 +425,7 @@ resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido_filtrados" {
 }
 
 resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido_statuspagamento" {
-  statement_id  = "AllowAPIGatewayInvokePedido"
+  statement_id  = "AllowAPIGatewayInvokePedidoStatusPag"
   action        = "lambda:InvokeFunction"
   function_name = data.aws_lambda_function.lambda_pedido.function_name
   principal     = "apigateway.amazonaws.com"
@@ -434,7 +434,7 @@ resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido_statuspagament
 }
 
 resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido_post" {
-  statement_id  = "AllowAPIGatewayInvokePedido"
+  statement_id  = "AllowAPIGatewayInvokePedidoPost"
   action        = "lambda:InvokeFunction"
   function_name = data.aws_lambda_function.lambda_pedido.function_name
   principal     = "apigateway.amazonaws.com"
@@ -443,7 +443,7 @@ resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido_post" {
 }
 
 resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido_statuspedido" {
-  statement_id  = "AllowAPIGatewayInvokePedido"
+  statement_id  = "AllowAPIGatewayInvokePedidoStatusPed"
   action        = "lambda:InvokeFunction"
   function_name = data.aws_lambda_function.lambda_pedido.function_name
   principal     = "apigateway.amazonaws.com"

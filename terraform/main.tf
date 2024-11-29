@@ -115,7 +115,7 @@ resource "aws_api_gateway_method" "get_cliente_by_cpf" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.cliente_cpf_resource.id
   http_method   = "GET"
-  authorization = "CUSTOM"
+  authorization = "NONE"
   authorizer_id = aws_api_gateway_authorizer.lambda_authorizer.id
   request_parameters = {
     "method.request.path.cpf" = true
@@ -140,7 +140,7 @@ resource "aws_api_gateway_method" "post_cliente" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.cliente_resource.id
   http_method   = "POST"
-  authorization = "CUSTOM"
+  authorization = "NONE"
   authorizer_id = aws_api_gateway_authorizer.lambda_authorizer.id
   request_models = {
     "application/json" = aws_api_gateway_model.CriarClienteRequest.name
@@ -161,7 +161,7 @@ resource "aws_api_gateway_method" "get_pedido" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.pedido_resource.id
   http_method   = "GET"
-  authorization = "CUSTOM"
+  authorization = "NONE"
   authorizer_id = aws_api_gateway_authorizer.lambda_authorizer.id
 }
 
@@ -178,7 +178,7 @@ resource "aws_api_gateway_method" "post_pedido" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.pedido_resource.id
   http_method   = "POST"
-  authorization = "CUSTOM"
+  authorization = "NONE"
   authorizer_id = aws_api_gateway_authorizer.lambda_authorizer.id
   request_models = {
     "application/json" = aws_api_gateway_model.CriarPedidoRequest.name
@@ -199,7 +199,7 @@ resource "aws_api_gateway_method" "get_pedido_by_id" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.pedido_id_resource.id
   http_method   = "GET"
-  authorization = "CUSTOM"
+  authorization = "NONE"
   authorizer_id = aws_api_gateway_authorizer.lambda_authorizer.id
   request_parameters = {
     "method.request.path.id" = true
@@ -224,7 +224,7 @@ resource "aws_api_gateway_method" "get_pedido_filtrados" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.pedido_filtrados_resource.id
   http_method   = "GET"
-  authorization = "CUSTOM"
+  authorization = "NONE"
   authorizer_id = aws_api_gateway_authorizer.lambda_authorizer.id
 }
 
@@ -242,7 +242,7 @@ resource "aws_api_gateway_method" "get_status_pagamento_by_id" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.pedido_status_pagamento_id_resource.id
   http_method   = "GET"
-  authorization = "CUSTOM"
+  authorization = "NONE"
   authorizer_id = aws_api_gateway_authorizer.lambda_authorizer.id
   request_parameters = {
     "method.request.path.id" = true
@@ -267,7 +267,7 @@ resource "aws_api_gateway_method" "put_status_pedido" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.pedido_status_pedido_resource.id
   http_method   = "PUT"
-  authorization = "CUSTOM"
+  authorization = "NONE"
   authorizer_id = aws_api_gateway_authorizer.lambda_authorizer.id
   request_models = {
     "application/json" = aws_api_gateway_model.AtualizarStatusPedidoRequest.name
@@ -288,7 +288,7 @@ resource "aws_api_gateway_method" "put_status_pagamento" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.pedido_status_pagamento_resource.id
   http_method   = "PUT"
-  authorization = "CUSTOM"
+  authorization = "NONE"
   authorizer_id = aws_api_gateway_authorizer.lambda_authorizer.id
   request_models = {
     "application/json" = aws_api_gateway_model.AtualizarStatusPagamentoRequest.name
@@ -309,7 +309,7 @@ resource "aws_api_gateway_method" "get_produto_by_categoria" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.produto_categoria_resource.id
   http_method   = "GET"
-  authorization = "CUSTOM"
+  authorization = "NONE"
   authorizer_id = aws_api_gateway_authorizer.lambda_authorizer.id
   request_parameters = {
     "method.request.path.categoria" = true
@@ -334,7 +334,7 @@ resource "aws_api_gateway_method" "post_produto" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.produto_resource.id
   http_method   = "POST"
-  authorization = "CUSTOM"
+  authorization = "NONE"
   authorizer_id = aws_api_gateway_authorizer.lambda_authorizer.id
   request_models = {
     "application/json" = aws_api_gateway_model.CriarProdutoRequest.name
@@ -354,7 +354,7 @@ resource "aws_api_gateway_method" "put_produto" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.produto_resource.id
   http_method   = "PUT"
-  authorization = "CUSTOM"
+  authorization = "NONE"
   authorizer_id = aws_api_gateway_authorizer.lambda_authorizer.id
   request_models = {
     "application/json" = aws_api_gateway_model.AtualizarProdutoRequest.name
@@ -374,7 +374,7 @@ resource "aws_api_gateway_method" "delete_produto" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.produto_resource.id
   http_method   = "DELETE"
-  authorization = "CUSTOM"
+  authorization = "NONE"
   authorizer_id = aws_api_gateway_authorizer.lambda_authorizer.id
   request_parameters = {
     "method.request.querystring.id" = false
@@ -401,7 +401,7 @@ resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido" {
   function_name = data.aws_lambda_function.lambda_pedido.function_name
   principal     = "apigateway.amazonaws.com"
 
-  source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*/*/*"
+  source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*"
 }
 
 resource "aws_lambda_permission" "allow_api_gateway_invoke_produto" {
@@ -410,7 +410,7 @@ resource "aws_lambda_permission" "allow_api_gateway_invoke_produto" {
   function_name = data.aws_lambda_function.lambda_produto.function_name
   principal     = "apigateway.amazonaws.com"
 
-  source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*/*/*"
+  source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*"
 }
 
 resource "aws_lambda_permission" "allow_api_gateway_invoke_cliente" {
@@ -419,7 +419,7 @@ resource "aws_lambda_permission" "allow_api_gateway_invoke_cliente" {
   function_name = data.aws_lambda_function.lambda_cliente.function_name
   principal     = "apigateway.amazonaws.com"
 
-  source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*/*/*"
+  source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*"
 }
 
 # Define Models for Request Bodies

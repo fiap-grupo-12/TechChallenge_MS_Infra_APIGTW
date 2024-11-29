@@ -406,7 +406,7 @@ resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido" {
   source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*/GET/Pedido"
 }
 
-resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido" {
+resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido_id" {
   statement_id  = "AllowAPIGatewayInvokePedido"
   action        = "lambda:InvokeFunction"
   function_name = data.aws_lambda_function.lambda_pedido.function_name
@@ -415,7 +415,7 @@ resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido" {
   source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*/GET/Pedido/{id}"
 }
 
-resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido" {
+resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido_filtrados" {
   statement_id  = "AllowAPIGatewayInvokePedido"
   action        = "lambda:InvokeFunction"
   function_name = data.aws_lambda_function.lambda_pedido.function_name
@@ -424,7 +424,7 @@ resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido" {
   source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*/GET/Pedido/Filtrados"
 }
 
-resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido" {
+resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido_statuspagamento" {
   statement_id  = "AllowAPIGatewayInvokePedido"
   action        = "lambda:InvokeFunction"
   function_name = data.aws_lambda_function.lambda_pedido.function_name
@@ -433,7 +433,7 @@ resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido" {
   source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*/GET/Pedido/StatusPagamento/{id}"
 }
 
-resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido" {
+resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido_post" {
   statement_id  = "AllowAPIGatewayInvokePedido"
   action        = "lambda:InvokeFunction"
   function_name = data.aws_lambda_function.lambda_pedido.function_name
@@ -442,13 +442,13 @@ resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido" {
   source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*/POST/Pedido"
 }
 
-resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido" {
+resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido_statuspedido" {
   statement_id  = "AllowAPIGatewayInvokePedido"
   action        = "lambda:InvokeFunction"
   function_name = data.aws_lambda_function.lambda_pedido.function_name
   principal     = "apigateway.amazonaws.com"
 
-  source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*/PUT/StatusPedido"
+  source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*/PUT/Pedido/StatusPedido"
 }
 
 resource "aws_lambda_permission" "allow_api_gateway_invoke_produto" {

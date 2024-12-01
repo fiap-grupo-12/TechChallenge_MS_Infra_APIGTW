@@ -63,7 +63,13 @@ resource "aws_api_gateway_resource" "produto_resource" {
   path_part   = "Produto"
 }
 
-# Sub-resources under "/api/Cliente"
+resource "aws_api_gateway_resource" "pagamento_resource" {
+  rest_api_id = aws_api_gateway_rest_api.lanchonete_api.id
+  parent_id   = aws_api_gateway_rest_api.lanchonete_api.root_resource_id
+  path_part   = "Pagamento"
+}
+
+# Sub-resources under "/Cliente"
 resource "aws_api_gateway_resource" "cliente_cpf_resource" {
   rest_api_id = aws_api_gateway_rest_api.lanchonete_api.id
   parent_id   = aws_api_gateway_resource.cliente_resource.id
@@ -101,6 +107,18 @@ resource "aws_api_gateway_resource" "pedido_status_pedido_resource" {
   path_part   = "StatusPedido"
 }
 
+resource "aws_api_gateway_resource" "pagamento_id_resource" {
+  rest_api_id = aws_api_gateway_rest_api.lanchonete_api.id
+  parent_id   = aws_api_gateway_resource.pagamento_resource.id
+  path_part   = "{id}"
+}
+
+resource "aws_api_gateway_resource" "pagamento_webhook_resource" {
+  rest_api_id = aws_api_gateway_rest_api.lanchonete_api.id
+  parent_id   = aws_api_gateway_resource.pagamento_resource.id
+  path_part   = "Webhook"
+}
+
 # Sub-resources under "/api/Produto"
 resource "aws_api_gateway_resource" "produto_categoria_resource" {
   rest_api_id = aws_api_gateway_rest_api.lanchonete_api.id
@@ -115,7 +133,7 @@ resource "aws_api_gateway_method" "get_cliente_by_cpf" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.cliente_cpf_resource.id
   http_method   = "GET"
-  authorization = "NONE"
+  authorization = "CUSTOM"
   authorizer_id = aws_api_gateway_authorizer.lambda_authorizer.id
   request_parameters = {
     "method.request.path.cpf" = true
@@ -127,7 +145,7 @@ resource "aws_api_gateway_integration" "get_cliente_by_cpf_integration" {
   resource_id             = aws_api_gateway_resource.cliente_cpf_resource.id
   http_method             = aws_api_gateway_method.get_cliente_by_cpf.http_method
   type                    = "AWS_PROXY"
-  integration_http_method = "GET"
+  integration_http_method = "POST"
   uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${data.aws_lambda_function.lambda_cliente.arn}/invocations"
 
   request_parameters = {
@@ -140,7 +158,7 @@ resource "aws_api_gateway_method" "post_cliente" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.cliente_resource.id
   http_method   = "POST"
-  authorization = "NONE"
+  authorization = "CUSTOM"
   authorizer_id = aws_api_gateway_authorizer.lambda_authorizer.id
   request_models = {
     "application/json" = aws_api_gateway_model.CriarClienteRequest.name
@@ -161,7 +179,7 @@ resource "aws_api_gateway_method" "get_pedido" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.pedido_resource.id
   http_method   = "GET"
-  authorization = "NONE"
+  authorization = "CUSTOM"
   authorizer_id = aws_api_gateway_authorizer.lambda_authorizer.id
 }
 
@@ -174,20 +192,11 @@ resource "aws_api_gateway_integration" "get_pedido_integration" {
   uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${data.aws_lambda_function.lambda_pedido.arn}/invocations"
 }
 
-resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido" {
-  statement_id  = "AllowAPIGatewayInvokePedido"
-  action        = "lambda:InvokeFunction"
-  function_name = data.aws_lambda_function.lambda_pedido.function_name
-  principal     = "apigateway.amazonaws.com"
-
-  source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*/GET/Pedido"
-}
-
 resource "aws_api_gateway_method" "post_pedido" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.pedido_resource.id
   http_method   = "POST"
-  authorization = "NONE"
+  authorization = "CUSTOM"
   authorizer_id = aws_api_gateway_authorizer.lambda_authorizer.id
   request_models = {
     "application/json" = aws_api_gateway_model.CriarPedidoRequest.name
@@ -208,7 +217,7 @@ resource "aws_api_gateway_method" "get_pedido_by_id" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.pedido_id_resource.id
   http_method   = "GET"
-  authorization = "NONE"
+  authorization = "CUSTOM"
   authorizer_id = aws_api_gateway_authorizer.lambda_authorizer.id
   request_parameters = {
     "method.request.path.id" = true
@@ -220,7 +229,7 @@ resource "aws_api_gateway_integration" "get_pedido_by_id_integration" {
   resource_id             = aws_api_gateway_resource.pedido_id_resource.id
   http_method             = aws_api_gateway_method.get_pedido_by_id.http_method
   type                    = "AWS_PROXY"
-  integration_http_method = "GET"
+  integration_http_method = "POST"
   uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${data.aws_lambda_function.lambda_pedido.arn}/invocations"
 
   request_parameters = {
@@ -233,7 +242,7 @@ resource "aws_api_gateway_method" "get_pedido_filtrados" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.pedido_filtrados_resource.id
   http_method   = "GET"
-  authorization = "NONE"
+  authorization = "CUSTOM"
   authorizer_id = aws_api_gateway_authorizer.lambda_authorizer.id
 }
 
@@ -242,7 +251,7 @@ resource "aws_api_gateway_integration" "get_pedido_filtrados_integration" {
   resource_id             = aws_api_gateway_resource.pedido_filtrados_resource.id
   http_method             = aws_api_gateway_method.get_pedido_filtrados.http_method
   type                    = "AWS_PROXY"
-  integration_http_method = "GET"
+  integration_http_method = "POST"
   uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${data.aws_lambda_function.lambda_pedido.arn}/invocations"
 }
 
@@ -251,7 +260,7 @@ resource "aws_api_gateway_method" "get_status_pagamento_by_id" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.pedido_status_pagamento_id_resource.id
   http_method   = "GET"
-  authorization = "NONE"
+  authorization = "CUSTOM"
   authorizer_id = aws_api_gateway_authorizer.lambda_authorizer.id
   request_parameters = {
     "method.request.path.id" = true
@@ -263,7 +272,7 @@ resource "aws_api_gateway_integration" "get_status_pagamento_by_id_integration" 
   resource_id             = aws_api_gateway_resource.pedido_status_pagamento_id_resource.id
   http_method             = aws_api_gateway_method.get_status_pagamento_by_id.http_method
   type                    = "AWS_PROXY"
-  integration_http_method = "GET"
+  integration_http_method = "POST"
   uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${data.aws_lambda_function.lambda_pedido.arn}/invocations"
 
   request_parameters = {
@@ -276,7 +285,7 @@ resource "aws_api_gateway_method" "put_status_pedido" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.pedido_status_pedido_resource.id
   http_method   = "PUT"
-  authorization = "NONE"
+  authorization = "CUSTOM"
   authorizer_id = aws_api_gateway_authorizer.lambda_authorizer.id
   request_models = {
     "application/json" = aws_api_gateway_model.AtualizarStatusPedidoRequest.name
@@ -288,7 +297,7 @@ resource "aws_api_gateway_integration" "put_status_pedido_integration" {
   resource_id             = aws_api_gateway_resource.pedido_status_pedido_resource.id
   http_method             = aws_api_gateway_method.put_status_pedido.http_method
   type                    = "AWS_PROXY"
-  integration_http_method = "PUT"
+  integration_http_method = "POST"
   uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${data.aws_lambda_function.lambda_pedido.arn}/invocations"
 }
 
@@ -297,7 +306,7 @@ resource "aws_api_gateway_method" "put_status_pagamento" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.pedido_status_pagamento_resource.id
   http_method   = "PUT"
-  authorization = "NONE"
+  authorization = "CUSTOM"
   authorizer_id = aws_api_gateway_authorizer.lambda_authorizer.id
   request_models = {
     "application/json" = aws_api_gateway_model.AtualizarStatusPagamentoRequest.name
@@ -309,7 +318,7 @@ resource "aws_api_gateway_integration" "put_status_pagamento_integration" {
   resource_id             = aws_api_gateway_resource.pedido_status_pagamento_resource.id
   http_method             = aws_api_gateway_method.put_status_pagamento.http_method
   type                    = "AWS_PROXY"
-  integration_http_method = "PUT"
+  integration_http_method = "POST"
   uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${data.aws_lambda_function.lambda_pedido.arn}/invocations"
 }
 
@@ -318,7 +327,7 @@ resource "aws_api_gateway_method" "get_produto_by_categoria" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.produto_categoria_resource.id
   http_method   = "GET"
-  authorization = "NONE"
+  authorization = "CUSTOM"
   authorizer_id = aws_api_gateway_authorizer.lambda_authorizer.id
   request_parameters = {
     "method.request.path.categoria" = true
@@ -330,7 +339,7 @@ resource "aws_api_gateway_integration" "get_produto_by_categoria_integration" {
   resource_id             = aws_api_gateway_resource.produto_categoria_resource.id
   http_method             = aws_api_gateway_method.get_produto_by_categoria.http_method
   type                    = "AWS_PROXY"
-  integration_http_method = "GET"
+  integration_http_method = "POST"
   uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${data.aws_lambda_function.lambda_produto.arn}/invocations"
 
   request_parameters = {
@@ -343,7 +352,7 @@ resource "aws_api_gateway_method" "post_produto" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.produto_resource.id
   http_method   = "POST"
-  authorization = "NONE"
+  authorization = "CUSTOM"
   authorizer_id = aws_api_gateway_authorizer.lambda_authorizer.id
   request_models = {
     "application/json" = aws_api_gateway_model.CriarProdutoRequest.name
@@ -363,7 +372,7 @@ resource "aws_api_gateway_method" "put_produto" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.produto_resource.id
   http_method   = "PUT"
-  authorization = "NONE"
+  authorization = "CUSTOM"
   authorizer_id = aws_api_gateway_authorizer.lambda_authorizer.id
   request_models = {
     "application/json" = aws_api_gateway_model.AtualizarProdutoRequest.name
@@ -375,7 +384,7 @@ resource "aws_api_gateway_integration" "put_produto_integration" {
   resource_id             = aws_api_gateway_resource.produto_resource.id
   http_method             = aws_api_gateway_method.put_produto.http_method
   type                    = "AWS_PROXY"
-  integration_http_method = "PUT"
+  integration_http_method = "POST"
   uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${data.aws_lambda_function.lambda_produto.arn}/invocations"
 }
 
@@ -383,7 +392,7 @@ resource "aws_api_gateway_method" "delete_produto" {
   rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
   resource_id   = aws_api_gateway_resource.produto_resource.id
   http_method   = "DELETE"
-  authorization = "NONE"
+  authorization = "CUSTOM"
   authorizer_id = aws_api_gateway_authorizer.lambda_authorizer.id
   request_parameters = {
     "method.request.querystring.id" = false
@@ -395,7 +404,7 @@ resource "aws_api_gateway_integration" "delete_produto_integration" {
   resource_id             = aws_api_gateway_resource.produto_resource.id
   http_method             = aws_api_gateway_method.delete_produto.http_method
   type                    = "AWS_PROXY"
-  integration_http_method = "DELETE"
+  integration_http_method = "POST"
   uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${data.aws_lambda_function.lambda_produto.arn}/invocations"
 
   request_parameters = {
@@ -403,15 +412,124 @@ resource "aws_api_gateway_integration" "delete_produto_integration" {
   }
 }
 
-#Permission for lambdas
-# resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido" {
-#   statement_id  = "AllowAPIGatewayInvokePedido"
-#   action        = "lambda:InvokeFunction"
-#   function_name = data.aws_lambda_function.lambda_pedido.function_name
-#   principal     = "apigateway.amazonaws.com"
+# Pagamento
+resource "aws_api_gateway_method" "post_pagamento" {
+  rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
+  resource_id   = aws_api_gateway_resource.pagamento_resource.id
+  http_method   = "POST"
+  authorization = "CUSTOM"
+  authorizer_id = aws_api_gateway_authorizer.lambda_authorizer.id
+  request_models = {
+    "application/json" = aws_api_gateway_model.CriarPagamentoRequest.name
+  }
+}
 
-#   source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*"
-# }
+resource "aws_api_gateway_integration" "post_pagamento_integration" {
+  rest_api_id             = aws_api_gateway_rest_api.lanchonete_api.id
+  resource_id             = aws_api_gateway_resource.pagamento_resource.id
+  http_method             = aws_api_gateway_method.post_pagamento.http_method
+  type                    = "AWS_PROXY"
+  integration_http_method = "POST"
+  uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${data.aws_lambda_function.lambda_pagamento.arn}/invocations"
+}
+
+resource "aws_api_gateway_method" "get_pagamento_by_id" {
+  rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
+  resource_id   = aws_api_gateway_resource.pagamento_id_resource.id
+  http_method   = "GET"
+  authorization = "CUSTOM"
+  authorizer_id = aws_api_gateway_authorizer.lambda_authorizer.id
+  request_parameters = {
+    "method.request.path.id" = true
+  }
+}
+
+resource "aws_api_gateway_integration" "get_pagamento_by_id_integration" {
+  rest_api_id             = aws_api_gateway_rest_api.lanchonete_api.id
+  resource_id             = aws_api_gateway_resource.pagamento_id_resource.id
+  http_method             = aws_api_gateway_method.get_pagamento_by_id.http_method
+  type                    = "AWS_PROXY"
+  integration_http_method = "POST"
+  uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${data.aws_lambda_function.lambda_pagamento.arn}/invocations"
+
+  request_parameters = {
+    "integration.request.path.id" = "method.request.path.id"
+  }
+}
+
+resource "aws_api_gateway_method" "post_pagamento_webhook" {
+  rest_api_id   = aws_api_gateway_rest_api.lanchonete_api.id
+  resource_id   = aws_api_gateway_resource.pagamento_webhook_resource.id
+  http_method   = "POST"
+  authorization = "CUSTOM"
+  authorizer_id = aws_api_gateway_authorizer.lambda_authorizer.id
+}
+
+resource "aws_api_gateway_integration" "post_pagamento_webhook_integration" {
+  rest_api_id             = aws_api_gateway_rest_api.lanchonete_api.id
+  resource_id             = aws_api_gateway_resource.pagamento_webhook_resource.id
+  http_method             = aws_api_gateway_method.post_pagamento.http_method
+  type                    = "AWS_PROXY"
+  integration_http_method = "POST"
+  uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${data.aws_lambda_function.lambda_pagamento.arn}/invocations"
+}
+
+#Permission for lambdas
+
+#/Pedido
+resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido" {
+  statement_id  = "AllowAPIGatewayInvokePedido"
+  action        = "lambda:InvokeFunction"
+  function_name = data.aws_lambda_function.lambda_pedido.function_name
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*/GET/Pedido"
+}
+
+resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido_id" {
+  statement_id  = "AllowAPIGatewayInvokePedidoId"
+  action        = "lambda:InvokeFunction"
+  function_name = data.aws_lambda_function.lambda_pedido.function_name
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*/GET/Pedido/{id}"
+}
+
+resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido_filtrados" {
+  statement_id  = "AllowAPIGatewayInvokePedidoFiltrados"
+  action        = "lambda:InvokeFunction"
+  function_name = data.aws_lambda_function.lambda_pedido.function_name
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*/GET/Pedido/Filtrados"
+}
+
+resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido_statuspagamento" {
+  statement_id  = "AllowAPIGatewayInvokePedidoStatusPag"
+  action        = "lambda:InvokeFunction"
+  function_name = data.aws_lambda_function.lambda_pedido.function_name
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*/GET/Pedido/StatusPagamento/{id}"
+}
+
+resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido_post" {
+  statement_id  = "AllowAPIGatewayInvokePedidoPost"
+  action        = "lambda:InvokeFunction"
+  function_name = data.aws_lambda_function.lambda_pedido.function_name
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*/POST/Pedido"
+}
+
+resource "aws_lambda_permission" "allow_api_gateway_invoke_pedido_statuspedido" {
+  statement_id  = "AllowAPIGatewayInvokePedidoStatusPed"
+  action        = "lambda:InvokeFunction"
+  function_name = data.aws_lambda_function.lambda_pedido.function_name
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*/PUT/Pedido/StatusPedido"
+}
 
 resource "aws_lambda_permission" "allow_api_gateway_invoke_produto" {
   statement_id  = "AllowAPIGatewayInvokeProduto"
@@ -423,12 +541,57 @@ resource "aws_lambda_permission" "allow_api_gateway_invoke_produto" {
 }
 
 resource "aws_lambda_permission" "allow_api_gateway_invoke_cliente" {
-  statement_id  = "AllowAPIGatewayInvokeCliente"
+  statement_id  = "AllowAPIGatewayInvokeClientes"
   action        = "lambda:InvokeFunction"
   function_name = data.aws_lambda_function.lambda_cliente.function_name
   principal     = "apigateway.amazonaws.com"
 
-  source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*"
+  source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*/GET/Cliente"
+}
+
+resource "aws_lambda_permission" "allow_api_gateway_invoke_cliente_cpf" {
+  statement_id  = "AllowAPIGatewayInvokeClienteCPF"
+  action        = "lambda:InvokeFunction"
+  function_name = data.aws_lambda_function.lambda_cliente.function_name
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*/GET/Cliente/{cpf}"
+}
+
+resource "aws_lambda_permission" "allow_api_gateway_invoke_cliente_post" {
+  statement_id  = "AllowAPIGatewayInvokeClientePost"
+  action        = "lambda:InvokeFunction"
+  function_name = data.aws_lambda_function.lambda_cliente.function_name
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*/POST/Cliente"
+}
+
+resource "aws_lambda_permission" "allow_api_gateway_invoke_pagamento_post" {
+  statement_id  = "AllowAPIGatewayInvokePagamentoPost"
+  action        = "lambda:InvokeFunction"
+  function_name = data.aws_lambda_function.lambda_pagamento.function_name
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*/POST/Pagamento"
+}
+
+resource "aws_lambda_permission" "allow_api_gateway_invoke_pagamento_get_by_id" {
+  statement_id  = "AllowAPIGatewayInvokeGetPagamentoById"
+  action        = "lambda:InvokeFunction"
+  function_name = data.aws_lambda_function.lambda_pagamento.function_name
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*/GET/Pagamento/{id}"
+}
+
+resource "aws_lambda_permission" "allow_api_gateway_invoke_pagamento_webhook" {
+  statement_id  = "AllowAPIGatewayInvokePostPagamentoWebhook"
+  action        = "lambda:InvokeFunction"
+  function_name = data.aws_lambda_function.lambda_pagamento.function_name
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "${aws_api_gateway_rest_api.lanchonete_api.execution_arn}/*/POST/Pagamento/Webhook"
 }
 
 # Define Models for Request Bodies
@@ -561,6 +724,26 @@ resource "aws_api_gateway_model" "CriarProdutoRequest" {
 }
 EOF
 }
+
+
+resource "aws_api_gateway_model" "CriarPagamentoRequest" {
+  rest_api_id  = aws_api_gateway_rest_api.lanchonete_api.id
+  name         = "CriarPagamentoRequest"
+  content_type = "application/json"
+  schema       = <<EOF
+{
+  "title": "CriarPagamentoRequest",
+  "type": "object",
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "valorTotal": { "type": "number" }
+  },
+  "required": ["id", "valorTotal"],
+  "additionalProperties": false
+}
+EOF
+}
+
 
 # Deploy the API
 resource "aws_api_gateway_deployment" "lanchonete_deployment" {
